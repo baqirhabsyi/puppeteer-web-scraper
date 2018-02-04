@@ -35,7 +35,7 @@ async function run() {
   await page.waitForNavigation();
 
   await page.waitFor(1000);
-  
+  page.$()
   const datePickCloseVis = checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
   if (datePickCloseVis != null) {
     await page.click(DATE_PICK_CLOSE_SELECTOR);
