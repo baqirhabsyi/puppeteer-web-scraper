@@ -36,7 +36,7 @@ async function run() {
 
   await page.waitFor(1000);
   page.$()
-  const datePickCloseVis = checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
+  const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
   if (datePickCloseVis != null) {
     await page.click(DATE_PICK_CLOSE_SELECTOR);
     await page.waitFor(1000);
@@ -63,11 +63,13 @@ async function checkSelectorVisibility(page, selector) {
 }
 
 async function getListLength(page) {
-  const LISTING_CLASS = 'prw_rup.prw_meta_hsx_responsive_listing.bottom-sep';
+  console.log('masuk pertama');
+  const LISTING_CLASS = 'listing';
 
   let listLength = await page.evaluate((sel) => {
     console.log('chekcing listing')
-    return document.getElementsByClassName(sel).length;
+    const elements = document.getElementsByClassName('header');
+    console.log(elements.length);
   }, LISTING_CLASS);
 
   const itemNum = parseInt(listLength);
