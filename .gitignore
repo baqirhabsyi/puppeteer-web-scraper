@@ -1,3 +1,5 @@
 node_modules/
 .vscode/
 /hotel.json
+/output
+/creds

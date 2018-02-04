@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase-admin": "^5.8.2",
+    "lodash": "^4.17.5",
     "puppeteer": "^0.13.0"
   }
 }
