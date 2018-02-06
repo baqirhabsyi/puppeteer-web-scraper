@@ -28,26 +28,25 @@ async function run() {
   await page.click(CITY_INPUT_SELECTOR);
   await page.waitFor(1000);
   await page.keyboard.type(city);
-  // await page.waitFor(1000);
-  // await page.keyboard.press('Enter');
   await page.waitFor(1000);
   await page.click(FIND_HOTELS_BUTTON_SELECTOR);
   await page.waitForNavigation();
-  await page.waitFor(1000);
-  
-  const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
-  if (datePickCloseVis != null) {
-    await page.click(DATE_PICK_CLOSE_SELECTOR);
-    await page.waitFor(1000);
-  }
-  
-  // await page.click(CLOSE_SURVEY_SELECTOR);
-  // await page.waitFor(1000);
 
+  await page.waitFor(3000);
+  const closeSelector = '#taplc_hsx_special_messaging_dusty_hotels_0 > div > div > div.prw_rup.prw_hotels_special_message > div > span.close.ui_icon.times';
+  await page.click(closeSelector);
+  // const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
+  // if (datePickCloseVis != null) {
+  //   await page.click(DATE_PICK_CLOSE_SELECTOR);
+  //   await page.waitFor(1000);
+  // }
+
+  console.log('Sebelum getNumPages');
   const numPages = await getNumPages(page);
   
   let data = [];
 
+  const LENGTH_SELECTOR_CLASS = 'listing';
   for (let h = 1; h <= numPages; h++) {
     console.log('Page number: ', h);
     await page.waitForSelector(FIRST_IMAGE_SELECTOR, { visible: true });
@@ -77,6 +76,7 @@ async function run() {
 }
 
 async function checkSelectorVisibility(page, selector) {
+  console.log(page.$(selector));
   return page.$(selector);
 }
 
