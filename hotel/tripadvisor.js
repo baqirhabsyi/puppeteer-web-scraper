@@ -28,42 +28,44 @@ async function run() {
   await page.click(CITY_INPUT_SELECTOR);
   await page.waitFor(1000);
   await page.keyboard.type(city);
-  // await page.waitFor(1000);
-  // await page.keyboard.press('Enter');
   await page.waitFor(1000);
   await page.click(FIND_HOTELS_BUTTON_SELECTOR);
   await page.waitForNavigation();
 
-  await page.waitFor(1000);
-  page.$()
-  const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
-  if (datePickCloseVis != null) {
-    await page.click(DATE_PICK_CLOSE_SELECTOR);
-    await page.waitFor(1000);
-  }
-  
-  // await page.click(CLOSE_SURVEY_SELECTOR);
-  // await page.waitFor(1000);
+  await page.waitFor(3000);
+  const closeSelector = '#taplc_hsx_special_messaging_dusty_hotels_0 > div > div > div.prw_rup.prw_hotels_special_message > div > span.close.ui_icon.times';
+  await page.click(closeSelector);
+  // const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
+  // if (datePickCloseVis != null) {
+  //   await page.click(DATE_PICK_CLOSE_SELECTOR);
+  //   await page.waitFor(1000);
+  // }
 
-  const numPages = getNumPages(page);
+  console.log('Sebelum getNumPages');
+  const numPages = await getNumPages(page);
   
   let data = [];
 
+  const LENGTH_SELECTOR_CLASS = 'listing';
   for (let h = 1; h <= numPages; h++) {
     console.log('Page number: ', h);
     await page.waitForSelector(FIRST_IMAGE_SELECTOR, { visible: true });
     await page.waitFor(2000);
 
-    const listLength = getListLength(page);
+    let listLength = await page.evaluate((sel) => {
+      return document.getElementsByClassName(sel).length;
+    }, LENGTH_SELECTOR_CLASS);
+    console.log('Number of items in page: ', listLength);
+    //const listLength = await getListLength(page);
   }
 }
 
 async function checkSelectorVisibility(page, selector) {
+  console.log(page.$(selector));
   return page.$(selector);
 }
 
 async function getListLength(page) {
-  console.log('masuk pertama');
   const LISTING_CLASS = 'listing';
 
   let listLength = await page.evaluate((sel) => {
@@ -72,11 +74,9 @@ async function getListLength(page) {
     console.log(elements.length);
   }, LISTING_CLASS);
 
-  const itemNum = parseInt(listLength);
+  console.log('Number of items in page: ', listLength);
 
-  console.log('Number of items in page: ', itemNum);
-
-  return itemNum;
+  return listLength;
 }
 
 async function getNumPages(page) {
