@@ -33,9 +33,8 @@ async function run() {
   await page.waitFor(1000);
   await page.click(FIND_HOTELS_BUTTON_SELECTOR);
   await page.waitForNavigation();
-
   await page.waitFor(1000);
-  page.$()
+  
   const datePickCloseVis = await checkSelectorVisibility(page, DATE_PICK_CLOSE_SELECTOR);
   if (datePickCloseVis != null) {
     await page.click(DATE_PICK_CLOSE_SELECTOR);
@@ -45,7 +44,7 @@ async function run() {
   // await page.click(CLOSE_SURVEY_SELECTOR);
   // await page.waitFor(1000);
 
-  const numPages = getNumPages(page);
+  const numPages = await getNumPages(page);
   
   let data = [];
 
@@ -54,29 +53,31 @@ async function run() {
     await page.waitForSelector(FIRST_IMAGE_SELECTOR, { visible: true });
     await page.waitFor(2000);
 
-    const listLength = getListLength(page);
+    let listLength = await page.evaluate(() => {
+      console.log('anjing');
+      console.log(document.getElementsByClassName('listing').length);
+    });
+
+    // Different Strat for Tripadvisor cos' they have weird selector naming
+    // Might have to resort to Umar's way of using the classes and get the items from it
+    const HOTEL_NAME_CLASS = 'price.__resizeWatch';
+    let hotelNames = await page.evaluate((sel) => {
+      let names = []
+      let elements = document.getElementsByClassName(sel);
+      for (let i = 0; i < elements.length; i++) {
+        let element = elements[i];
+        const nama = element.innerHTML;
+        console.log(nama);
+        names.push(name);
+      }
+      return names;
+    }, HOTEL_NAME_CLASS);
+    await console.log(hotelNames);
   }
 }
 
 async function checkSelectorVisibility(page, selector) {
   return page.$(selector);
-}
-
-async function getListLength(page) {
-  console.log('masuk pertama');
-  const LISTING_CLASS = 'listing';
-
-  let listLength = await page.evaluate((sel) => {
-    console.log('chekcing listing')
-    const elements = document.getElementsByClassName('header');
-    console.log(elements.length);
-  }, LISTING_CLASS);
-
-  const itemNum = parseInt(listLength);
-
-  console.log('Number of items in page: ', itemNum);
-
-  return itemNum;
 }
 
 async function getNumPages(page) {
