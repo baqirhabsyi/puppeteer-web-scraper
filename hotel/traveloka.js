@@ -1,6 +1,7 @@
 // Import Dependencies
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const savetofirebase = require('../operations/savetofirestore');
 
 async function run() {
   const browser = await puppeteer.launch({
@@ -18,11 +19,14 @@ async function run() {
 
   const page = await browser.newPage();
 
+  console.log('gantwang')
   await page.goto('https://www.traveloka.com/en/old', {
     timeout: 3000000
   });
 
-  await page.waitForNavigation({timeout: 0});
+  //await page.waitForNavigation({timeout: 0});
+
+  await page.waitFor(5000);
 
   const CITY = 'Jakarta, Indonesia';
 
@@ -30,7 +34,7 @@ async function run() {
   
   
 
-  await page.waitForSelector(HOTEL_SELECTOR);
+  //await page.waitForSelector(HOTEL_SELECTOR);
   await page.click(HOTEL_SELECTOR);
   await console.log('click hotel tab');
   await page.click(OLD_CITY_SELECTOR);
@@ -41,7 +45,7 @@ async function run() {
   await page.waitFor(1000);
   await page.keyboard.press('Enter');
   await page.waitFor(1000);
-  await page.click(OLD_SEARCH_HOTEL_SELECTOR);
+  await page.click(OLD_SEARCH_HOTEL_SELECTOR, { clickCount: 2 });
   await console.log('clicked autocomplete suggestion');
   await page.waitFor(20000);
 
@@ -160,18 +164,21 @@ async function run() {
   }
 
   const json = await JSON.stringify(data);
+  const saved = await savetofirestore('traveloka', json);
 
-  await fs.writeFile('../output/traveloka-hotel.json', json, (err) => {
-    if (err) throw err;
-    console.log('Results saved to JSON file!');
-  });
-
-  await browser.close();
+  if (saved == true) {
+    console.log('Files saved to DB! \n Closing Scraper');
+    await browser.close();
+  } else {
+    console.error('Error saving to db, saving to local file instead.');
+    await fs.writeFile('../output/traveloka-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
+    await browser.close();
+  }
 }
 
 async function getNumPages(page) {
   const LAST_NUM_SELECTOR = '#desktopContentV3 > div > div > div._3Rofa.OFzKc > div:nth-child(4) > div._3mvEl > div._1mhOj > div > div._1ihZF._2zINZ > div:nth-child(7)';
-  
+  await page.waitForSelector(LAST_NUM_SELECTOR, { visible: true });
   let inner = await page.evaluate((sel) => {
     let html = document.querySelector(sel).innerHTML;
 

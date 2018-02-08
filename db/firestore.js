@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-var serviceAccount = require('../creds/travelokadbjkt-f8abbba09c66.json');
+var serviceAccount = require('../creds/serviceAccount.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

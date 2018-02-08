@@ -1,20 +1,29 @@
-//async function savetofirestore(collection, data) {
+async function savetofirestore(collection, data) {
   const firedb = require('../db/firestore');
-  const testData = require('../output/traveloka-hotel.json');
+  //const testData = require('../output/misteraladin-hotel.json');
   const _ = require('lodash');
   
-  const arr = _.values(testData);
+  const arr = _.values(data);
 
   for (let index = 0; index < arr.length; index++) {
     const item = arr[index];
     const { hotelName, hotelPrice, hotelRateStar, hotelRateTrave, hotelRateTripAdv, hotelImageUrl } = item;
     //console.log(item);
-    firedb.collection('traveloka')
+    firedb.collection(collection)
       .doc()
       .set(item)
       .then(() => console.log('Added ', hotelName, ' to the database.'))
-      .catch((error) => console.error('Error writing document: ', error));
+      .then(() => {
+        return true;
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+        return false;
+      });
   }
+}
+
+module.exports = savetofirestore();
   
   // testData && Object.keys(testData).forEach(key => {
   //   const nestedContent = testData[key];
@@ -39,5 +48,4 @@
   //     .doc(item)
   // })
 //}
-
 //await savetofirestore();

@@ -11,6 +11,6 @@
   "dependencies": {
     "firebase-admin": "^5.8.2",
     "lodash": "^4.17.5",
-    "puppeteer": "^0.13.0"
+    "puppeteer": "^1.0.0"
   }
 }
