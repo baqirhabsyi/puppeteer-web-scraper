@@ -1,7 +1,8 @@
 // Import Dependencies
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const savetofirebase = require('../operations/savetofirestore');
+const dbops = require('../operations/savetofirestore');
+const _ = require('lodash');
 
 async function run() {
   const browser = await puppeteer.launch({
@@ -45,7 +46,11 @@ async function run() {
   await page.waitFor(1000);
   await page.keyboard.press('Enter');
   await page.waitFor(1000);
-  await page.click(OLD_SEARCH_HOTEL_SELECTOR, { clickCount: 2 });
+  // await page.click(OLD_SEARCH_HOTEL_SELECTOR, { clickCount: 2, delay: 100 });
+  // await page.keyboard.press('ArrowDown');
+  // await page.keyboard.press('Enter');
+  // await page.click(OLD_SEARCH_HOTEL_SELECTOR, { clickCount: 2, delay: 100 });
+  await page.click('.tv-searchButton');
   await console.log('clicked autocomplete suggestion');
   await page.waitFor(20000);
 
@@ -164,15 +169,36 @@ async function run() {
   }
 
   const json = await JSON.stringify(data);
-  const saved = await savetofirestore('traveloka', json);
 
-  if (saved == true) {
-    console.log('Files saved to DB! \n Closing Scraper');
-    await browser.close();
-  } else {
-    console.error('Error saving to db, saving to local file instead.');
-    await fs.writeFile('../output/traveloka-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
-    await browser.close();
+  await fs.writeFileSync('../output/traveloka-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
+
+  await saveToFirestore();
+
+  await browser.close();
+
+}
+
+async function saveToFirestore() {
+  const firedb = require('../db/firestore');
+  const data = require('../output/traveloka-hotel.json');
+  
+  const arr = _.values(data);
+
+  for (let index = 0; index < arr.length; index++) {
+    const item = arr[index];
+    const { hotelName } = item;
+    firedb.collection('traveloka')
+      .doc()
+      .set(item)
+      .then(() => console.log('Added ', hotelName, ' to the database.'))
+      .then(() => {
+        console.log('Success')
+        return true;
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+        return false;
+      });
   }
 }
 

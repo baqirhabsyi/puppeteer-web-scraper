@@ -1,7 +1,8 @@
 // Import Dependencies
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const savetofirestore = require('../operations/savetofirestore');
+const firedb = require('../db/firestore');
+const _ = require('lodash');
 
 async function run() {
   const browser = await puppeteer.launch({
@@ -37,10 +38,11 @@ async function run() {
 
   let datas = [];
 
-  for (let h = 1; h < pageNumber; h++) {
+  for (let h = 1; h <= pageNumber; h++) {
     console.log('Page number: ', h);
     const NEXT_BUTTON_SELECTOR = '.btn.btn-next';
     const LAYAR_ANJING_SELECTOR = '.ematic_closeExitIntentOverlay_2';
+    const ALTERNATE_NEXT_BUTTON_SELECTOR = '.fa.fa-fw.fa-angle-double-right';
 
     try {
       await page.click(LAYAR_ANJING_SELECTOR);
@@ -48,39 +50,70 @@ async function run() {
         return document.getElementsByClassName('product-item').length;
       });
       console.log('Number of items in page: ', listLength);
+
+      await page.hover(NEXT_BUTTON_SELECTOR);
+      await page.waitFor(1000);
+      await page.hover(FIRST_IMAGE_SELECTOR);
+
       await getItems(page, listLength, HOTEL_NAME_SELECTOR, HOTEL_PRICE_SELECTOR, FIRST_IMAGE_SELECTOR, datas);
-      await page.click(NEXT_BUTTON_SELECTOR, { delay: 5000 });
+      await page.waitForSelector(NEXT_BUTTON_SELECTOR, { visbile: true });
+
+      await page.hover(NEXT_BUTTON_SELECTOR);
+      await page.waitFor(3000);
+      await page.click(NEXT_BUTTON_SELECTOR, { delay: 500 });
+
     } catch (error) {
       const listLength = await page.evaluate(() => {
         return document.getElementsByClassName('product-item').length;
       });
       console.log('Number of items in page: ', listLength);
       await getItems(page, listLength, HOTEL_NAME_SELECTOR, HOTEL_PRICE_SELECTOR, FIRST_IMAGE_SELECTOR, datas);
-      await page.click(NEXT_BUTTON_SELECTOR, { delay: 5000 });
+      await page.waitForSelector(NEXT_BUTTON_SELECTOR, { visbile: true });
+
+      await page.hover(NEXT_BUTTON_SELECTOR);
+      await page.waitFor(3000);
+      await page.click(NEXT_BUTTON_SELECTOR, { delay: 500 });
+      
     }
   }
 
   const json = await JSON.stringify(datas);
 
-  const saved = await savetofirestore('misteraladin', json);
+  await fs.writeFileSync('../output/misteraladin-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
+  await SaveMisterAladin();
 
-  if (saved == true) {
-    console.log('Files saved to DB! \n Closing Scraper');
-    await browser.close();
-  } else {
-    console.error('Error saving to db, saving to local file instead.');
-    await fs.writeFile('../output/misteraladin-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
-    await browser.close();
+  await browser.close();
+}
+
+async function SaveMisterAladin() {
+  
+  const data = require('../output/misteraladin-hotel.json');
+  const arr = _.values(data);
+
+  for (let index = 0; index < arr.length; index++) {
+    const item = arr[index];
+    const { hotelName } = item;
+    //console.log(item);
+    firedb.collection('misteraladin')
+      .doc()
+      .set(item)
+      .then(() => console.log('Added ', hotelName, ' to the database.'))
+      .then(() => {
+        console.log('Success')
+        return true;
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+        return false;
+      });
   }
 }
 
 async function getItems(page, listLength, HOTEL_NAME_SELECTOR, HOTEL_PRICE_SELECTOR, FIRST_IMAGE_SELECTOR, datas) {
-  for (let i = 1; i <= listLength; i++) {
+  for (let i = 1; i <= listLength + 5; i++) {
     await page.waitForSelector(FIRST_IMAGE_SELECTOR);
-
     const hotelNameSelector = HOTEL_NAME_SELECTOR.replace('INDEX', i);
     const hotelPriceSelector = HOTEL_PRICE_SELECTOR.replace('INDEX', i);
-
     let hotelName = await page.evaluate((sel) => {
       let element = document.querySelector(sel);
       return element ? element.innerText : null;
