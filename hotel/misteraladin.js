@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 async function run() {
   const browser = await puppeteer.launch({
-    headless: false
+    headless: true
   });
 
   const page = await browser.newPage();
@@ -16,6 +16,7 @@ async function run() {
     height: 720
   });
 
+  console.log('Going to misteraladin');
   await page.goto('https://www.misteraladin.com/', {
     timeout: 3000000
   });
@@ -80,18 +81,18 @@ async function run() {
   const json = await JSON.stringify(datas);
 
   await fs.writeFileSync('../output/misteraladin-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
-  await SaveMisterAladin();
+  await SaveMisterAladin(datas);
 
   await browser.close();
 }
 
-async function SaveMisterAladin() {
+async function SaveMisterAladin(data) {
   
-  const data = require('../output/misteraladin-hotel.json');
-  const arr = _.values(data);
+  //const data = require('../output/misteraladin-hotel.json');
+  //const arr = _.values(data);
 
-  for (let index = 0; index < arr.length; index++) {
-    const item = arr[index];
+  for (let index = 0; index < data.length; index++) {
+    const item = data[index];
     const { hotelName } = item;
     //console.log(item);
     firedb.collection('misteraladin')

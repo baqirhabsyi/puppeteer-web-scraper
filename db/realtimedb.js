@@ -1,11 +1,12 @@
-async function SaveToDb(collection, data) {
-  const admin = require('firebase-admin');
-  const serviceAccount = require('../creds/service-key.json');
+const admin = require('firebase-admin');
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount);
-    databaseURL: 
-  })
-}
+const serviceAccount = require('../creds/serviceAccount.json');
 
-module.exports = SaveToDb(collection, data);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://travelokadbjkt.firebaseio.com'
+});
+
+const firertdb = admin.database();
+
+module.exports = firertdb;

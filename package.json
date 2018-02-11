@@ -1,16 +1,23 @@
 {
-  "name": "trave",
-  "version": "1.0.0",
+  "name": "puppeteer-web-scraping",
+  "engines": {
+    "node": "8.9.4"
+  },
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eslint": "^4.17.0",
+    "express": "^4.16.2",
     "firebase-admin": "^5.8.2",
     "lodash": "^4.17.5",
-    "puppeteer": "^1.0.0"
+    "moment": "^2.20.1",
+    "puppeteer": "^1.0.0",
+    "valid-url": "^1.0.9"
   }
 }
