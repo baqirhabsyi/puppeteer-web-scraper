@@ -84,20 +84,12 @@ async function run() {
             return element ? element.innerText : null;
           }, hotePriceSelector);
 
-          // let hotelRating = await page.evaluate((sel) => {
-          //   let element = document.querySelector(sel);
-          //   return element ? element.innerHTML : null;
-          // }, hotelRatingSelector);
-
           if (hotelName != null) {
             // Put the scraped data inside an object
             const data = {
               'hotelName': hotelName,
               'hotelPrice': hotelPrice,
-              //'hotelRating': hotelRating
             };
-
-            console.log(hotelName, ' => ', hotelPrice);
 
             datas.push(data); // Push the object into the array
           }
@@ -126,20 +118,10 @@ async function run() {
       browser.close();
     }
   }
-  //process.exit(0);
-}
-
-async function saveToRealtimeDb() {
-  const firertdb = require('../db/realtimedb');
-  const data = require('../output/pegipegi-hotel.json');
-  const arr = _.values(data);
-
-  const dbRef = firertdb.ref('hotel/pegipegi')
 }
 
 async function saveToFirestore(json) {
   const firedb = require('../db/firestore');
-  //const data = require('../output/pegipegi-hotel.json');
   const arr = _.values(json);
 
   for (let index = 0; index < arr.length; index++) {
