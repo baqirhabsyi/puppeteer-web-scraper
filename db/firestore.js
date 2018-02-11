@@ -10,3 +10,4 @@ admin.initializeApp({
 var firedb = admin.firestore();
 
 module.exports = firedb;
+
