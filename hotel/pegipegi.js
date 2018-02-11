@@ -91,10 +91,6 @@ async function run() {
       const json = await JSON.stringify(datas);
       console.log(datas);
       // await fs.writeFileSync('../output/pegipegi-hotel.json', json, err => err ? console.error('Error writing file to storage: ', err) : console.log('Results saved to JSON file!'));
-      fs.writeFileSync('../output/pegipegi-hotel.json', json, (err) => {
-        if (err) throw err;
-        console.log('Saved item to File');
-      });
 
       saveToFirestore(datas);
       
