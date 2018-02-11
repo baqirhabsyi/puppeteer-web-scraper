@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "travelokadbjkt",
+  "private_key_id": "c8459efcdb13db3e34fdac8b0f54fa87847a699f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC1d1lL2Yt63GMZ\n/AfvTmnb9gEBkB6BJQDkLQvbWhs6fFRmAPeZ3vY0aTpJFoDCaz4VaTMRKGZ6cxKx\nTEvN4vDP4rInshOOVI6Xk7dLtZUftU2kjCKPOlutKVjct+xNSXX/4WfnouvtEPWX\nhoX6xxVmp3e5IsdCSixzhypMuLLMWKlAyzjRfeF0jDu6VC75xxiHFWv+oqUGqloL\nZ4k16O6RLAphf1pI/84TfdHw/eyJZj11buJ91A88fsJAoEBh80HTWYVoVrkse3Uf\n2Bpo/9hy8BiF6mcp07msodaDLy5Vf/C8OHqh4fYbgJHjJrcymttvV/3h1GHUOLmL\nO8y0PUTNAgMBAAECggEAGxUt4ZEdLP/5VmZz9LY6PFbRvZ75voJ8SJGkhF9FUww9\nOGAKlA9fpWDTDxdprhp9UIq70WK7MKk97/IYGik1kYEe36fHHWXnRh4IrCb0k5/m\nb5luivvFtOlH1uEoRjyhfMfyTvLUzTPLw4qTMmNGAWUbDClxnaYeTjutB3hFTxPn\n/8DyWnZEfCCj9tbpAIRtBuf5T/Iuy3jI+cInkDpun2P04Q/Dg1O+y7yHj5a6FCVt\nCR1L4NXg8q6L8xZtcYYtXP1596dZNsAETwuesDYdveiUw1dYZz5yRHUciWfLE5UK\ndgb1qQlPuXdCWR/dxQ+5XvOHgeOzyAhoXvwZZal4zQKBgQDhlJeakBU8baL1K6fV\ne1zf7HNcK/dGewoDNXHyPPZUqDzZUl/JJ0Zv3yZ3iqBn4QtYE/Dm7/eq+R5UknOR\ngrBPPfnEt/cHH2nWKTQatIEpYfcR9bN6NsptV5jZWJwPDFyIszxDi4fYG2K0aGjf\n8aApAhos/yNndU14X0blTNr3kwKBgQDN79xanP+qVG7Vw7QTJ76JccAhDAcxEMER\n9brtXDJPh8Ool3FRIspZ5kIRCIbhazOG2vQGH+nnFpuJgxVmtsFd97yx3xxhq6we\nqSt6b4HnhW9c/T/OE2PsLKPUZq+WBg2nw9nOPNPNeKu6jevAWqsegRwKYIbLoeQm\nrJXpUhvOHwKBgGGvUydflZKhd5vr17Yewc1GO36Cm4Yt6dwR3NIljBaE9DS38zrM\ngzgWzjWeFnBlh+AQYpXe/MVRM80zzlAI5Aisseh6McMn21Eebq3R1Mzy22cvmxUl\nfOt0r4APWyU5GSkpVMN7PMxcr5WoUSIJJG4dtvAdXFuE9JNXzv+lFH15AoGBAKM3\npifTIvb2sFmQIFrGN0dr9mC6zcBfjQYVAjA50E4kRjiKvu8VaddSna4uWeizNEV/\np8Rq6tGSo3ebgwzDcAJv5Qf80tu+Wk56udDyK705jofe2AEWcS2wO7COKj/3UD9V\nBH1mzF+fckwLS3xK4DDvFzBKTMt75f2Y77/aqdr1AoGARObsrpJAXUrWkTlwEpzq\nscQq1+rRbApI7T8kd2ZK5KYtjviEqr+rgLnribjVooWdZLZ0ral5zAR3vQnb/29g\nsXUU3uQH4ytEbLg54aLJZ7ODGZQLEAiIL42LZ6RKPMbJQWU/jgtJGt6Ev7VxzNg0\n6ctQobv711MvxZX9YEa3TFk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "scraping-data-transfer@travelokadbjkt.iam.gserviceaccount.com",
+  "client_id": "102641193480362232699",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/scraping-data-transfer%40travelokadbjkt.iam.gserviceaccount.com"
+}
