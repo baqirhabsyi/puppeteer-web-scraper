@@ -16,3 +16,7 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.send('You\'ve come to the scraping hub of mz ganteng.');
 });
+
+app.get('/test', (req, res) => {
+  res.send('Aku ganteng sekali');
+});
