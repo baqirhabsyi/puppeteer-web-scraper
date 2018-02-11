@@ -9,7 +9,7 @@ async function run() {
   while (isFinishedRun == false) {
     try {
       var browser = await puppeteer.launch({
-        headless: true
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
 
       // Get Date
@@ -25,20 +25,7 @@ async function run() {
       // Navigate to pegipegi.com
       console.log('Navigating to pegipegi.com');
       await page.setViewport({ width: 1366, height: 768 });
-      //await page.goto('https://www.pegipegi.com', { timeout: 3000000 });
       await page.goto(navigatingUrl, { timeout: 3000000 });
-
-      // const CITY_INPUT_SELECTOR = '#hotelNameKey';
-      // await page.click(CITY_INPUT_SELECTOR);
-      // await page.waitFor(500);
-      // await page.keyboard.type(CITY);
-      // await page.waitFor(1500);
-      // await page.keyboard.press('Enter', { delay: 300 });
-
-      // const CARI_BUTTON_SELECTOR = '#formSearchHotel > div > div > div.twoColumn > div.right > button';
-      // await page.waitFor(500);
-      // await page.click(CARI_BUTTON_SELECTOR);
-      // await page.waitForNavigation();
 
       const numPages = await getNumPages(page);
       console.log('Number of Pages is: ', numPages);

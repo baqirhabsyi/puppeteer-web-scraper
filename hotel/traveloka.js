@@ -12,7 +12,7 @@ async function run() {
   while (isFinishedRun == false) {
     try {
       var browser = await puppeteer.launch({
-        headless: true
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       let OLD_CITY_SELECTOR, OLD_SEARCH_HOTEL_SELECTOR, HOTEL_SELECTOR;
   
