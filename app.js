@@ -9,8 +9,8 @@ app.listen(port, () => {
 
   run();
   pegipegi();
-  setInterval(run, 7200000);
-  setInterval(pegipegi, 720000);
+  // setInterval(run, 7200000);
+  // setInterval(pegipegi, 720000);
 });
 
 app.get('/', (req, res) => {

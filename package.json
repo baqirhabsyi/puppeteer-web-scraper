@@ -18,7 +18,7 @@
     "firebase-admin": "^5.8.2",
     "lodash": "^4.17.5",
     "moment": "^2.20.1",
-    "puppeteer": "0.13.0",
+    "puppeteer": "^1.0.0",
     "valid-url": "^1.0.9"
   }
 }

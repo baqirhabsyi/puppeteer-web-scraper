@@ -1,9 +1,8 @@
 // Import Dependencies
 const puppeteer = require('puppeteer');
-const fs = require('fs');
-const dbops = require('../operations/savetofirestore');
-const _ = require('lodash');
 const firedb = require('../db/firestore');
+const crypto = require('crypto');
+const sha1 = x => crypto.createHash('sha1').update(x, 'utf8').digest('hex');
 
 
 async function run() {
@@ -12,8 +11,10 @@ async function run() {
   while (isFinishedRun == false) {
     try {
       var browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //args: ['--no-sandbox', '--disable-setuid-sandbox']
+        headless: false
       });
+      
       let OLD_CITY_SELECTOR, OLD_SEARCH_HOTEL_SELECTOR, HOTEL_SELECTOR;
   
       OLD_CITY_SELECTOR = '#hotelSourceArea > div.tv-search-result-input-container > input';
@@ -68,6 +69,7 @@ async function run() {
       const HOTEL_IMAGE_URL_SELECTOR = '#desktopContentV3 > div > div > div._3Rofa.OFzKc > div:nth-child(4) > div._3mvEl > div._1mhOj > div > div:nth-child(INDEX) > div._3DegG > div:nth-child(1) > div > img';
       const NEXT_BUTTON_SELECTOR = '#desktopContentV3 > div > div > div._3Rofa.OFzKc > div:nth-child(4) > div._3mvEl > div._1mhOj > div > div._1ihZF._2zINZ > div:nth-child(INDEX)';
       const FIRST_IMAGE_SELECTOR = '#desktopContentV3 > div > div > div._3Rofa.OFzKc > div:nth-child(4) > div._3mvEl > div._1mhOj > div > div:nth-child(1) > div._3DegG > div:nth-child(1) > div > img';
+      const HOTEL_ITEM_CLICK_SELECTOR = '#desktopContentV3 > div > div > div._3Rofa.OFzKc > div:nth-child(4) > div._3mvEl > div._1mhOj > div > div:nth-child(INDEX)';
   
       let data = []; // Declare variable to store scraping data.
   
@@ -87,11 +89,7 @@ async function run() {
         let nextLength = await page.evaluate((sel) => {
           return document.getElementsByClassName(sel).length;
         }, PAGE_NUMBERS_CLASS);
-  
-        await page.evaluate((sel) => {
-          return document.getElementsByClassName(sel).length;
-        }, )
-        
+
         console.log('Page number: ', h)
         console.log('Number of items in page: ', listLength);
         //console.log(nextLength);//
@@ -114,6 +112,7 @@ async function run() {
           let hotelRateTraveSelector = HOTEL_RATE_TRAVE_SELECTOR.replace('INDEX', i);
           let hotelRateTripAdvSelector = HOTEL_RATE_TRIPADVISOR_SELECTOR.replace('INDEX', i);
           let hotelImageUrlSelector = HOTEL_IMAGE_URL_SELECTOR.replace('INDEX', i);
+          let hotelItemClickSelector = HOTEL_ITEM_CLICK_SELECTOR.replace('INDEX', i);
   
           let hotelName = await page.evaluate((sel) => {
             let element = document.querySelector(sel);
@@ -127,7 +126,7 @@ async function run() {
   
           let hotelRateStar = await page.evaluate((sel) => {
             try {
-              return document.body.querySelector(sel).getAttribute("content");
+              return document.body.querySelector(sel).getAttribute('content');
             } catch (error) {
               return null;
             }
@@ -140,7 +139,7 @@ async function run() {
   
           let hotelRateTripAdv = await page.evaluate((sel) => {
             try {
-              return document.body.querySelector(sel).getAttribute("src").substring(59, 62);
+              return document.body.querySelector(sel).getAttribute('src').substring(59, 62);
             } catch (error) {
               return null;
             }
@@ -148,20 +147,31 @@ async function run() {
   
           let hotelImageUrl = await page.evaluate((sel) => {
             try {
-              return document.body.querySelector(sel).getAttribute("src");
+              return document.body.querySelector(sel).getAttribute('src');
             } catch (error) {
               return null;
             }
           }, hotelImageUrlSelector);
+
+          await page.click(hotelItemClickSelector);
+          await page.waitFor(3000);
+          const hotelUrlTraveloka = await page.url();
+          await page.keyboard.down('Control');
+          await page.keyboard.down('KeyW');
+          await page.keyboard.up('KeyW');
+          await page.keyboard.up('Control');
+
+          console.log(hotelUrlTraveloka);
   
           if (hotelName != null) {
             const datas = {
-              "hotelName": hotelName,
-              "hotelPrice": hotelPrice,
-              "hotelRateStar": hotelRateStar,
-              "hotelRateTrave": hotelRateTrave,
-              "hotelRateTripAdv": hotelRateTripAdv,
-              "hotelImageUrl": hotelImageUrl
+              'hotelName': hotelName,
+              'hotelPrice': hotelPrice,
+              'hotelRateStar': hotelRateStar,
+              'hotelRateTrave': hotelRateTrave,
+              'hotelRateTripAdv': hotelRateTripAdv,
+              'hotelImageUrl': hotelImageUrl,
+              'hotelUrl': hotelUrlTraveloka
             };
             data.push(datas); // Push the scraped data to the array
           }
@@ -173,13 +183,7 @@ async function run() {
         let nextButtonSelector = NEXT_BUTTON_SELECTOR.replace('INDEX', nextIndex);
         await page.click(nextButtonSelector);
       }
-  
-      //const json = await JSON.stringify(data);
-  
-      // Save the scraping results to JSON for backup
-      //await fs.writeFileSync('../output/traveloka-hotel.json', json, err => err ? console.error('Error occured: ', err) : console.log('Results saved to JSON file!'));
-  
-      // Save the scraping results to FireStore Database
+
       await saveToFirestore(data);
 			
       console.log('Finished Saving to Database');
@@ -195,23 +199,18 @@ async function run() {
 }
 
 async function saveToFirestore(data) {
-  // const firedb = require('../db/firestore');
-  // const data = require('../output/traveloka-hotel.json');
-  
-  // const arr = _.values(data);
-
   for (let index = 0; index < data.length; index++) {
     const item = data[index];
     const { hotelName } = item;
+    const hashedName = sha1(hotelName);
     firedb.collection('traveloka')
-      .doc()
+      .doc(hashedName)
       .set(item)
       .then(() => console.log('Added ', hotelName, ' to the database.'))
       .catch((error) => {
         console.error('Error writing document: ', error);
         return false;
       });
-    console.log('Finished saving to Database.')
   }
 }
 
@@ -231,4 +230,5 @@ async function getNumPages(page) {
   return numPages;
 }
 
-module.exports = run;
+run();
+//module.exports = run;

@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
+const crypto = require('crypto');
+const sha1 = x => crypto.createHash('sha1').update(x, 'utf8').digest('hex');
 
 async function run() {
   let isFinishedRun = false;
@@ -39,6 +40,7 @@ async function run() {
       const ALTERNATE_HOTEL_NAME_SELECTOR = '#hotel-search-result > div.widget.listResult > div:nth-child(INDEX) > a > span';
       const HOTEL_PRICE_SELECTOR = '#hotel-search-result > div.widget.listResult > div:nth-child(INDEX) > div.right > div.contentRight > div.contentPrice > div.diskonPrice.formButton';
       const HOTEL_RATING_SELECTOR = '#hotel-search-result > div.widget.listResult > div:nth-child(INDEX) > div.right > div.contentRight > div.ratingList > span.ratingLeft';
+      const HOTEL_URL_SELECTOR = '#hotel-search-result > div.widget.listResult > div:nth-child(INDEX) > a';
                                   
 
       let datas = []; // Array to store scraping data
@@ -60,6 +62,7 @@ async function run() {
           let hotelNameSelector = HOTEL_NAME_SELECTOR.replace('INDEX', i);
           let hotePriceSelector = HOTEL_PRICE_SELECTOR.replace('INDEX', i);
           let hotelRatingSelector = HOTEL_RATING_SELECTOR.replace('INDEX', i);
+          let hotelUrlSelector = HOTEL_URL_SELECTOR.replace('INDEX', i);
 
           let hotelName = await page.evaluate((sel) => {
             let element = document.querySelector(sel);
@@ -68,16 +71,32 @@ async function run() {
 
           let hotelPrice = await page.evaluate((sel) => {
             let element = document.querySelector(sel);
-            return element ? element.innerText : null;
+            return element ? element.innerText.replace('Rp ', '').replace(',', '') : null;
           }, hotePriceSelector);
+
+          let hotelRating = await page.evaluate((sel) => {
+            let element = document.body.querySelector(sel);
+            return element ? element.innerHTML : null;
+          }, hotelRatingSelector);
+
+          let hotelUrl = await page.evaluate((sel) => {
+            try {
+              return document.body.querySelector(sel).getAttribute('href');
+            } catch (error) {
+              return null;
+            }
+          }, hotelUrlSelector);
+
+          console.log(hotelUrl + ' => ' + hotelRating);
 
           if (hotelName != null) {
             // Put the scraped data inside an object
             const data = {
               'hotelName': hotelName,
               'hotelPrice': hotelPrice,
+              'hotelUrl': hotelUrl,
+              'hotelRating': hotelRating
             };
-
             datas.push(data); // Push the object into the array
           }
         }
@@ -110,7 +129,8 @@ async function saveToFirestore(json) {
   for (let index = 0; index < arr.length; index++) {
     const item = arr[index];
     const { hotelName } = item;
-    firedb.collection('pegipegi').doc().set(item)
+    const hashedName = sha1(hotelName);
+    firedb.collection('pegipegi').doc(hashedName).set(item)
       .then(() => console.log('Added ', hotelName, ' to the database.'))
       .catch((error) => {
         console.error('Error writing document: ', error);
@@ -131,4 +151,5 @@ async function getNumPages(page) {
   return Math.ceil(totalItems / 30);
 }
 
-module.exports = run;
+run();
+//module.exports = run;
