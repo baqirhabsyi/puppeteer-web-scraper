@@ -13,8 +13,8 @@ async function run() {
   while (isFinishedRun == false) {
     try {
       var browser = await puppeteer.launch({
-        //args: ['--no-sandbox', '--disable-setuid-sandbox']
-        headless: false
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //headless: false
       });
 
       const page = await browser.newPage();
