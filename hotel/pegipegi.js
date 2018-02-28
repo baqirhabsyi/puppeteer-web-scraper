@@ -87,8 +87,6 @@ async function run() {
             }
           }, hotelUrlSelector);
 
-          console.log(hotelUrl + ' => ' + hotelRating);
-
           if (hotelName != null) {
             // Put the scraped data inside an object
             const data = {
