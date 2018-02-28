@@ -66,7 +66,6 @@ async function run() {
       // Loop through the pages to get the items
       for (let h = 1; h <= numPages; h++) {
         // Wait for the first item to load
-        //await page.waitForSelector(FIRST_IMAGE_SELECTOR, { visible: true });
         console.log(tmblog, 'Page number: ', h, '/', numPages);
         await page.waitFor(2000);
 
@@ -163,4 +162,4 @@ async function getNumPages(page) {
   return Math.ceil(strings[1] / 18);
 }
 
-run();
+module.exports = run;

@@ -151,5 +151,5 @@ async function getNumPages(page) {
   return Math.ceil(totalItems / 30);
 }
 
-run();
-//module.exports = run;
+//run();
+module.exports = run;

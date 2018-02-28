@@ -230,5 +230,4 @@ async function getNumPages(page) {
   return numPages;
 }
 
-run();
-//module.exports = run;
+module.exports = run;
