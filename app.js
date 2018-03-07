@@ -26,3 +26,18 @@ app.get('/', (req, res) => {
 app.get('/test', (req, res) => {
   res.send('Aku ganteng sekali');
 });
+
+app.get('/travemobile', (req, res) => {
+  traveMobi();
+  res.send('Scraping traveloka mobile now, check progress at papertrail.');
+});
+
+app.get('/traveloka', (req, res) => {
+  run();
+  res.send('Scraping traveloka now, check progress at papertrail.');
+});
+
+app.get('/pegipegi', (req, res) => {
+  pegipegi();
+  res.send('Scraping pegipegi now, check progress at papertrail.');
+});
