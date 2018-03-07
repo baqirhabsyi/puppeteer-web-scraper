@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 const firedb = require('../db/firestore');
 const crypto = require('crypto');
 const sha1 = x => crypto.createHash('sha1').update(x, 'utf8').digest('hex');
+const traveLog = 'Traveloka: ';
 
 
 async function run() {
@@ -27,7 +28,7 @@ async function run() {
       const page = await browser.newPage();
   
       // Navigating to Traveloka
-      console.log('Navigating to Home Page');
+      console.log(traveLog, 'Navigating to Home Page');
       await page.setViewport({ width: 1366, height: 768 });
       await page.goto('https://www.traveloka.com/en/old', {
         timeout: 3000000
@@ -36,23 +37,23 @@ async function run() {
       await page.waitFor(5000);
   
       const CITY = 'Jakarta, Indonesia';
-      console.log('City to be searched is: ', CITY); 
+      console.log(traveLog, 'City to be searched is: ', CITY); 
   
       // Begin input city for searching
   
       await page.click(HOTEL_SELECTOR);
-      await console.log('Clicked hotel tab.');
+      await console.log(traveLog, 'Clicked hotel tab.');
       await page.click(OLD_CITY_SELECTOR);
-      await console.log('Clicked City Input TextBox');
+      await console.log(traveLog, 'Clicked City Input TextBox');
       await page.keyboard.type(CITY);
-      await console.log('Finished typing city.');
+      await console.log(traveLog, 'Finished typing city.');
       await page.waitFor(1000);
       await page.keyboard.press('Enter');
       await page.waitFor(1000);
       await page.click('.tv-searchButton');
-      await console.log('Clicked Search Button');
+      await console.log(traveLog, 'Clicked Search Button');
   
-      console.log('Navigating to search page...');
+      console.log(traveLog, 'Navigating to search page...');
       await page.waitFor(20000);
   
       // Process data to be scraped
@@ -90,8 +91,8 @@ async function run() {
           return document.getElementsByClassName(sel).length;
         }, PAGE_NUMBERS_CLASS);
 
-        console.log('Page number: ', h)
-        console.log('Number of items in page: ', listLength);
+        console.log(traveLog, 'Page number: ', h);
+        console.log(traveLog, 'Number of items in page: ', listLength);
         //console.log(nextLength);//
         let nextIndex = undefined;
         if (h == 1 || h == 2 || h == numPages - 1 || h == numPages) {
@@ -152,16 +153,6 @@ async function run() {
               return null;
             }
           }, hotelImageUrlSelector);
-
-          await page.click(hotelItemClickSelector);
-          await page.waitFor(3000);
-          const hotelUrlTraveloka = await page.url();
-          await page.keyboard.down('Control');
-          await page.keyboard.down('KeyW');
-          await page.keyboard.up('KeyW');
-          await page.keyboard.up('Control');
-
-          console.log(hotelUrlTraveloka);
   
           if (hotelName != null) {
             const datas = {
@@ -186,12 +177,12 @@ async function run() {
 
       await saveToFirestore(data);
 			
-      console.log('Finished Saving to Database');
+      console.log(traveLog, 'Finished Saving to Database');
       isFinishedRun = true;
       await browser.close();
     } catch (error) {
       console.error('Error occured: ', error);
-      console.log('Trying to scrape again');
+      console.log(traveLog, 'Trying to scrape again');
       browser.close();
     }
   }
@@ -206,9 +197,9 @@ async function saveToFirestore(data) {
     firedb.collection('traveloka')
       .doc(hashedName)
       .set(item)
-      .then(() => console.log('Added ', hotelName, ' to the database.'))
+      .then(() => console.log(traveLog, 'Added ', hotelName, ' to the database.'))
       .catch((error) => {
-        console.error('Error writing document: ', error);
+        console.error(traveLog, 'Error writing document: ', error);
         return false;
       });
   }
