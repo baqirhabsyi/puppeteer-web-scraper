@@ -35,7 +35,8 @@ async function run() {
   while (isFinishedRun == false) {
     try {
       var browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: false
       });
 
       const page = await browser.newPage();
@@ -49,11 +50,11 @@ async function run() {
         const { cityName, cityUrl } = cityList[h];
 
         console.log(xxilog, 'Scraping city ', cityName);
-        await page.goto(cityUrl);
+        await page.goto(cityUrl, { waitUntil: 'networkidle0' });
 
         //#region Get Now Playing
         console.log(xxilog, 'Going to now playing page');
-        await page.goto(NOW_PLAYING_URL);
+        await page.goto(NOW_PLAYING_URL, { waitUntil: 'networkidle0' });
         const NOW_PLAYING_LIST_SELECTORS = '#menu_ol_arrow > li:nth-child(INDEX) > a';
 
         // Get the length of the items inside the list
@@ -96,7 +97,7 @@ async function run() {
         //#region Get all movies data from all theaters inside the city
         // Get all theaters title and links to each theater
         const THEATERS_URL = 'https://m.21cineplex.com/gui.list_theater.php?p=th';
-        await page.goto(THEATERS_URL);
+        await page.goto(THEATERS_URL, { waitUntil: 'networkidle0' });
         await page.waitFor(2000);
       
         const theatersLink = await page.evaluate((cityName, url) => {
@@ -123,7 +124,8 @@ async function run() {
         for (let i = 0; i < theatersLink.length; i++) {
           const theaterLink = theatersLink[i].theaterLink;
           const theaterName = theatersLink[i].theaterName;
-          await page.goto(theaterLink);
+          console.log(xxilog, 'Current url:', theaterLink);
+          await page.goto(theaterLink, { waitUntil: 'networkidle0', timeout: 1000000000 });
 
           const movieTitles = await page.evaluate(() => {
             const anchors = Array.from(document.querySelectorAll('#menu_ol_schedule'));
@@ -243,5 +245,4 @@ async function saveMoviesList(data) {
   }
 }
 
-//run();
 module.exports = run;
