@@ -9,14 +9,14 @@ const xxi = require('./movies/xxi');
 app.listen(port, () => {
   console.log('App running on port ', port);
 
-  run();
-  pegipegi();
-  traveMobi();
-  xxi();
-  setInterval(run, 7200000);
-  setInterval(traveMobi, 720000);
-  setInterval(xxi, 82800000);
-  setInterval(pegipegi, 720000);
+  // run();
+  // pegipegi();
+  // traveMobi();
+  // xxi();
+  // setInterval(run, 7200000);
+  // setInterval(traveMobi, 720000);
+  // setInterval(xxi, 82800000);
+  // setInterval(pegipegi, 720000);
 });
 
 app.get('/', (req, res) => {
@@ -40,4 +40,9 @@ app.get('/traveloka', (req, res) => {
 app.get('/pegipegi', (req, res) => {
   pegipegi();
   res.send('Scraping pegipegi now, check progress at papertrail.');
+});
+
+app.get('/xxi', (req, res) => {
+  xxi();
+  res.send('Scraping XXI now, check progress at papertrail.');
 });
