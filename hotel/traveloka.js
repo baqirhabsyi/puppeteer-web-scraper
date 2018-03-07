@@ -162,7 +162,7 @@ async function run() {
               'hotelRateTrave': hotelRateTrave,
               'hotelRateTripAdv': hotelRateTripAdv,
               'hotelImageUrl': hotelImageUrl,
-              'hotelUrl': hotelUrlTraveloka
+              'hotelCity': CITY
             };
             data.push(datas); // Push the scraped data to the array
           }

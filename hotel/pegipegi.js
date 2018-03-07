@@ -93,7 +93,8 @@ async function run() {
               'hotelName': hotelName,
               'hotelPrice': hotelPrice,
               'hotelUrl': hotelUrl,
-              'hotelRating': hotelRating
+              'hotelRating': hotelRating,
+              'hotelCity': CITY
             };
             datas.push(data); // Push the object into the array
           }

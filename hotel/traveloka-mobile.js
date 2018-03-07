@@ -101,7 +101,8 @@ async function run() {
           if (hotelName != null) {
             const data = {
               'hotelName': hotelName,
-              'hotelUrl': hotelUrl
+              'hotelUrl': hotelUrl,
+              'hotelCity': CITY
             };
             datas.push(data);
           }
