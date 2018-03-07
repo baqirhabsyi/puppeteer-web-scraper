@@ -124,7 +124,6 @@ async function run() {
         for (let i = 0; i < theatersLink.length; i++) {
           const theaterLink = theatersLink[i].theaterLink;
           const theaterName = theatersLink[i].theaterName;
-          console.log(xxilog, 'Current url:', theaterLink);
           await page.goto(theaterLink, { waitUntil: 'networkidle0', timeout: 1000000000 });
 
           const movieTitles = await page.evaluate(() => {
@@ -141,7 +140,6 @@ async function run() {
         
           const moviesPlaying = await page.evaluate((cityName, theaterName, currentDay) => {
             const anchors = Array.from(document.getElementsByClassName('schedule_timeshow'));
-            console.log(anchors);
             return anchors.map(anchor => {
               const dateAnchor = anchor.getElementsByClassName('p_date');
               const date = dateAnchor[0].innerText.trim();
